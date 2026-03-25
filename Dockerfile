@@ -33,6 +33,7 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y \
         perl \
         python3 \
+        sox \
     && rm -rf /var/lib/apt/lists/*
 
 # copy only the files we need
