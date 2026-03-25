@@ -1,6 +1,9 @@
 # sphinx-asr
 
 ## TODO
+- [ ] Replace Dockerfile with a simple makefile? (now that im simplifying things, i realize
+that we prob dont need docker because CMU sphinx tools have like zero dependencies. its just
+raw C)
 - [ ] Documentation
   - [ ] README
   - [ ] Documentation/comments in default `experiment.yml`
