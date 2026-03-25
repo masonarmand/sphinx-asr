@@ -16,10 +16,9 @@ import sys
 import os
 from pathlib import Path
 
-# TODO media wiki stuff
+from lib.asr_util import (err, get_sphinx_root)
 
-# TODO maybe get_sphinx_root and err can live in a different util.py file
-# or something
+# TODO media wiki stuff
 
 @dataclass
 class Corpus:
@@ -32,21 +31,6 @@ class CorpusTemplate:
     """Corpus template name and path."""
     path: Path
     label: str
-
-
-def err(msg: str):
-    """print error message to stderr and exit"""
-    print(f"[ERROR] {msg}", file=sys.stderr)
-    sys.exit(1)
-
-
-def get_sphinx_root() -> Path:
-    """Get the project root directory."""
-    root = os.environ.get("SPHINX_ROOT")
-    if not root:
-        err("SPHINX_ROOT environment variable not set. Exiting.")
-    return Path(root)
-    #return Path(__file__).resolve().parent.parent
 
 
 def get_corpora_list(corpus_dir: Path) -> list[Corpus]:
