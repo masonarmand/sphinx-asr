@@ -99,7 +99,7 @@ def make_experiment_dir(
     """Create the experiment directory."""
     exp_name = f"{num:03d}"
     exp_subdir = exp_dir / exp_name
-    exp_subdir.mkdir(parents=True, exists_ok=True)
+    exp_subdir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(config_template.path, exp_subdir / "experiment.yml")
     rel_dir = exp_subdir.relative_to(root_dir)
     print(f"Created experiment {exp_name} at {rel_dir}/")
