@@ -1,0 +1,73 @@
+# ============================================================================
+# Experiment Configuration
+# ============================================================================
+name: ""
+author: ""
+
+# ============================================================================
+# Training
+# ============================================================================
+
+train:
+  corpora:
+    - name: librispeech
+      split: train-clean-100
+
+# ============================================================================
+# Decoding
+# ============================================================================
+
+decode:
+  corpus:
+    name: librispeech
+    split: dev-clean
+
+# ============================================================================
+# SphinxTrain Parameters
+# ============================================================================
+# these override values in the generated sphinx_train.cfg.
+# for full list of parameters see, see:
+#   vendor/sphinxtrain/etc/sphinx_train.cfg
+
+
+sphinxtrain:
+  # HMM type. Options:
+  #   .cont. - continuous
+  #   .semi. - semi-continuous
+  #   .ptm.  - phonetically tied mixtures
+  CFG_HMM_TYPE: ".ptm."
+  # CFG_STATESPERHMM: 3
+  # CFG_SKIPSTATE: "no"
+
+  CFG_INITIAL_NUM_DENSITIES: 128
+  CFG_FINAL_NUM_DENSITIES: 128
+
+  # Number of senones
+  # example values:
+  #   1-5 hours: 200-500
+  #   100 hours: 3000-8000
+  #   300+ hours: 5000-15000
+  CFG_N_TIED_STATES: 5000
+  CFG_LDA_MLLT: "no"
+
+  # baum-welch convergence settings
+  # CFG_MIN_ITERATIONS: 1
+  # CFG_MAX_ITERATIONS: 10
+  # CFG_CONVERGENCE_RATIO: 0.1
+
+  # parallelism
+  CFG_NPART: 4
+  # "Queue::POSIX" for local multi-core, "Queue::PBS" for torque cluster.
+  CFG_QUEUE_TYPE: "Queue::POSIX"
+
+  # decoding parameters
+  # DEC_CFG_LANGUAGEWEIGHT: "10"
+  # DEC_CFG_BEAMWIDTH: "1e-80"
+  # DEC_CFG_WORDBEAM: "1e-40"
+  # DEC_CFG_WORDPENALTY: "0.2"
+
+  # decoding parallelism
+  DEC_CFG_NPART: 8
+
+  # automatically generate pronunciations for words not in the dictionary:
+  CFG_G2P_MODEL: "yes"

@@ -1,5 +1,24 @@
-corpus/
 features/
 experiments/
 *.log
 __pycache__
+
+# Ignore all corpus files, but keep directory structure and yaml files.
+# The following is what is kept:
+# corpus/
+#     corpus_name/
+#         dict/  (contents ignored but folder kept)
+#         lm/    (contents ignored but folder kept)
+#     corpus.yml
+#     experiment.yml.template
+corpus/*/**
+!corpus/*/
+# keep yaml files
+!corpus/*/corpus.yml
+!corpus/*/experiment.yml.template
+
+# keep the scaffold dirs
+!corpus/*/lm/
+!corpus/*/dict/
+!corpus/*/lm/.gitkeep
+!corpus/*/dict/.gitkeep

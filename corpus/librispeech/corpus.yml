@@ -1,0 +1,46 @@
+# LibriSpeech corpus configuration
+# Source: https://www.openslr.org/12
+
+name: librispeech
+audio_format: flac
+audio_type: sox
+sample_rate: 16000
+
+dict: dict/librispeech-lexicon.txt
+lm: lm/3-gram.pruned.3e-7.arpa.gz
+
+splits:
+  train-clean-100:
+    description: "100 hours of clean read speech (training)"
+    hours: 100.6
+    audio: train-clean-100/
+
+  train-clean-360:
+    description: "360 hours of clean read speech (training)"
+    hours: 363.6
+    audio: train-clean-360/
+
+  train-other-500:
+    description: "500 hours of noisier read speech (training)"
+    hours: 496.7
+    audio: train-other-500/
+
+  dev-clean:
+    description: "Development set, clean speech"
+    hours: 5.4
+    audio: dev-clean/
+
+  dev-other:
+    description: "Development set, noisier speech"
+    hours: 5.3
+    audio: dev-other/
+
+  test-clean:
+    description: "Test set, clean speech"
+    hours: 5.4
+    audio: test-clean/
+
+  test-other:
+    description: "Test set, noisier speech"
+    hours: 5.1
+    audio: test-other/
