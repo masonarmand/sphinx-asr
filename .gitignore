@@ -1,7 +1,10 @@
 features/
 experiments/
 *.log
+
+# python stuff
 __pycache__
+venv
 
 # Ignore all corpus files, but keep directory structure and yaml files.
 # The following is what is kept:
