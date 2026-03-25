@@ -2,6 +2,7 @@
 General helper functions for sphinx-asr scripts.
 """
 import os
+import sys
 from pathlib import Path
 
 def err(msg: str):
