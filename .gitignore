@@ -2,3 +2,4 @@ corpus/
 features/
 experiments/
 *.log
+__pycache__
