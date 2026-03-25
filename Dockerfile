@@ -41,14 +41,13 @@ COPY --from=builder /usr/local/bin/pocketsphinx /usr/local/bin/
 COPY --from=builder /usr/local/bin/pocketsphinx_batch /usr/local/bin/
 COPY --from=builder /usr/local/bin/pocketsphinx_lm_convert /usr/local/bin/
 COPY --from=builder /usr/local/share/pocketsphinx/ /usr/local/share/pocketsphinx/
-COPY --from=builder /build/sphinxtrain/build/ /opt/sphinxtrain/bin/
+COPY --from=builder /build/sphinxtrain/build/ /opt/sphinxtrain/build/
 COPY --from=builder /build/sphinxtrain/scripts/ /opt/sphinxtrain/scripts/
 COPY --from=builder /build/sphinxtrain/etc/ /opt/sphinxtrain/etc/
 
 RUN ldconfig
 
 # copy project scripts
-COPY parsers/ /app/parsers/
 COPY scripts/ /app/scripts/
 
 WORKDIR /app
