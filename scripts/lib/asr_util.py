@@ -1,6 +1,7 @@
 """
 General helper functions for sphinx-asr scripts.
 """
+from pathlib import Path
 
 def err(msg: str):
     """Print error message to stderr and exit."""
