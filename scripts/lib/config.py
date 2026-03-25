@@ -10,7 +10,7 @@ import re
 import sys
 from pathlib import Path
 
-from asr_util import (err, get_sphinx_root)
+from .asr_util import (err, get_sphinx_root)
 
 # TODO maybe we should have a requirements.txt and a venv, but idk i dont want
 # to complicate things.
@@ -28,6 +28,7 @@ def load_yaml(path: Path) -> dict:
         return {}
     if not isinstance(data, dict):
         raise TypeError(f"Expected yaml mapping in {path}")
+    return data
 
 
 def load_corpus(corpus_name: str, sphinx_root: Path) -> dict:
@@ -49,8 +50,33 @@ def load_corpus(corpus_name: str, sphinx_root: Path) -> dict:
 
 
 def load_experiment(exp_dir: Path, sphinx_root: Path) -> dict:
-    """TODO"""
-    return {}
+    """
+    Load experiment.yml and resolve corpus references.
+
+    each corpus entry in train.corpora and decode.corpus gets a '_corpus' key
+    with the corpus.yml data. Split names are validated against the corpus.
+    """
+    exp_yml = exp_dir / "experiment.yml"
+    if not exp_yml.is_file():
+        raise FileNotFoundError(f"experiment.yml not found at {exp_yml}")
+
+    experiment = load_yaml(exp_yml)
+
+    # resolve training corpus references
+    for entry in experiment.get("train", {}).get("corpora", []):
+        corpus = load_corpus(entry["name"], sphinx_root)
+        _validate_split(entry["name"], entry["split"], corpus)
+        entry["_corpus"] = corpus
+
+    # resolve decode corpus reference
+    decode_corpus = experiment.get("decode", {}).get("corpus", {})
+    if decode_corpus and decode_corpus.get("name"):
+        corpus = load_corpus(decode_corpus["name"], sphinx_root)
+        _validate_split(decode_corpus["name"], decode_corpus["split"], corpus)
+        decode_corpus["_corpus"] = corpus
+
+    return experiment
+
 
 def generate_sphinx_train_cfg(
         exp_dir: Path,
@@ -60,5 +86,16 @@ def generate_sphinx_train_cfg(
     """TODO"""
     return ""
 
+##############################################################################
+# Internal helpers
+##############################################################################
 
-
+def _validate_split(corpus_name: str, split_name: str, corpus: dict):
+    """Raise ValueError if split doesn't exist in corpus."""
+    splits = corpus.get("splits", {})
+    if split_name not in splits:
+        available = ", ".join(splits.keys())
+        raise ValueError(
+            f"Split '{split_name}' not found in corpus '{corpus_name}'. "
+            f"Available: {available}"
+        )
