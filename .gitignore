@@ -5,6 +5,7 @@ bin/
 
 # python stuff
 __pycache__
+.venv/
 venv
 
 # Ignore all corpus files, but keep directory structure and yaml files.
