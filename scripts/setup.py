@@ -96,6 +96,46 @@ def _resolve_dict_path(experiment: dict, root: Path) -> Path | None:
     return None
 
 
+def filter_oov_utterances(
+        exp_dir: Path,
+        db_name: str,
+        oov: set[str],
+        prefix: str
+) -> int:
+    """
+    remove utterances containing OOV words from fileids and transcription.
+    this avoids the need to use G2P for automatically generating pronunciations
+    for words not in the dictionary.
+    oov = Out Of Vocabulary
+    returns count of removed utterances.
+    """
+    fileids_path = exp_dir / "etc" / f"{db_name}_{prefix}.fileids"
+    trans_path = exp_dir / "etc" / f"{db_name}_{prefix}.transcription"
+
+    if not fileids_path.is_file():
+        return 0
+
+    fileids = fileids_path.read_text().splitlines()
+    trans = trans_path.read_text().splitlines()
+
+    kept_fileids = []
+    kept_trans = []
+    removed = 0
+
+    for fid, tr, in zip(fileids, trans):
+        words = tr.split("</s>")[0].split("<s>")[-1].split()
+        if oov.isdisjoint(words):
+            kept_fileids.append(fid)
+            kept_trans.append(tr)
+        else:
+            removed += 1
+
+    fileids_path.write_text("\n".join(kept_fileids) + "\n")
+    trans_path.write_text("\n".join(kept_trans) + "\n")
+
+    return removed
+
+
 def generate_dictionary(
         exp_dir: Path,
         db_name: str,
@@ -129,6 +169,14 @@ def generate_dictionary(
         print(
             f"  Warning: {len(dictionary.oov)} words not in dictionary, "
             f"written to {oov_file.name}")
+
+        train_removed = filter_oov_utterances(exp_dir, db_name, dictionary.oov, "train")
+        decode_removed = filter_oov_utterances(exp_dir, db_name, dictionary.oov, "decode")
+        if train_removed or decode_removed:
+            print(
+                f"  Filtered {train_removed} train, "
+                f"{decode_removed} decode utterances with OOV words"
+            )
 
     # save phone list
     dictionary.phones.add("SIL")
