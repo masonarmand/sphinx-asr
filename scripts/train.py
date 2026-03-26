@@ -6,6 +6,7 @@ Usage:
     train.py <experiment_dir>
 """
 
+import time
 import argparse
 import os
 import subprocess
@@ -16,7 +17,7 @@ from lib.asr_util import get_sphinx_root
 STEPS = [
     # "000.comp_feat/slave_feat.pl",
     "00.verify/verify_all.pl",
-    "0000.g2p_train/g2p_train.pl",
+    #"0000.g2p_train/g2p_train.pl",
     "01.lda_train/slave_lda.pl",
     "02.mllt_train/slave_mllt.pl",
     "05.vector_quantize/slave.VQ.pl",
@@ -33,6 +34,7 @@ STEPS = [
 
 # TODO
 def main():
+    """program entry"""
     parser = argparse.ArgumentParser(description="Run sphinxtrain training.")
     parser.add_argument("exp_dir", type=Path)
     args = parser.parse_args()
@@ -45,13 +47,22 @@ def main():
     scripts_dir = root / "vendor" / "sphinxtrain" / "scripts"
     os.chdir(exp_dir)
 
+    start = time.monotonic()
     for step in STEPS:
         print(f"\n=== {step} ===")
+        step_start = time.monotonic()
         ret = subprocess.call(["perl", str(scripts_dir / step)])
+        step_elapsed = time.monotonic() - step_start
+        minutes, seconds = divmod(int(step_elapsed), 60)
+        print(f"=== Step time: {minutes}m {seconds}s ===")
         if ret != 0:
             print(f"Error: {step} failed (exit {ret})")
             sys.exit(ret)
-    print("\nTraining complete.")
+
+    elapsed = time.monotonic() - start
+    hours, remainder = divmod(int(elapsed), 3600)
+    minutes, seconds = divmod(remainder, 60)
+    print(f"\nTraining complete. Total time: {hours}h {minutes}m {seconds}s")
 
 
 if __name__ == "__main__":
