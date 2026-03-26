@@ -27,4 +27,5 @@ raw C)
 - [ ] Parser
   - [ ] librispeech parser/setup (call sphinxtrains internal included scripts)
   - [ ] Switchboard parser/setup script
-- [ ] Script for creating a corpus directory (creates yaml files and directory structure)
+- [X] Script for creating a corpus directory (creates yaml files and directory structure)
+- [ ] genfeats once per corpus instead of per experiment

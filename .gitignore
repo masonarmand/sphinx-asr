@@ -1,6 +1,7 @@
 features/
 experiments/
 *.log
+bin/
 
 # python stuff
 __pycache__
