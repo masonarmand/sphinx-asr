@@ -1,7 +1,11 @@
 # sphinx-asr
 
+## Useful Resources
+- [Sphinx-3 Decoder](https://www.cs.cmu.edu/~archan/s_info/Sphinx3/doc/s3_description.html)
+- [The Incomplete Guide to Sphinx-3 Performance Tuning](https://cmusphinx.github.io/wiki/decodertuning/)
+
 ## TODO
-- [ ] Replace Dockerfile with a simple makefile? (now that im simplifying things, i realize
+- [X] Replace Dockerfile with a simple makefile? (now that im simplifying things, i realize
 that we prob dont need docker because CMU sphinx tools have like zero dependencies. its just
 raw C)
 - [ ] Documentation
@@ -10,10 +14,10 @@ raw C)
 - [ ] Setup guide & usage
 - [ ] Style guide for python & bash so codebase stays consisten in the future
 - [ ] Scripts that accomplis the following:
-  - [ ] make exp dir
-  - [ ] functions to generate `sphinx_train.cfg` from yaml
-  - [ ] setup exp dir
-  - [ ] run train
+  - [X] make exp dir
+  - [X] functions to generate `sphinx_train.cfg` from yaml
+  - [X] setup exp dir
+  - [X] run train
   - [ ] decode train
   - [ ] gen feats
   - [ ] ensure everything works on both:
