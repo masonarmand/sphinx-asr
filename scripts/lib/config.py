@@ -61,7 +61,7 @@ def validate_experiment(experiment: dict, exp_yml: Path):
                     continue
                 if "name" not in entry:
                     errors.append(f"train.corpora[{i}]: missing 'name'")
-                if "split" not in entry:
+                if "split" not in entry and "splits" not in entry:
                     errors.append(
                         f"train.corpora[{i}]: missing 'split' or 'splits'"
                     )
@@ -204,6 +204,7 @@ def generate_sphinx_train_cfg(
 
     overrides["CFG_WAVFILES_DIR"] = str(sphinx_root)
     overrides["CFG_FEATFILES_DIR"] = str(sphinx_root)
+    overrides["DEC_CFG_FEATFILES_DIR"] = str(sphinx_root)
 
     # LM path
     decode_cfg = experiment.get("decode", {})
