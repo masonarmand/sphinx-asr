@@ -26,7 +26,7 @@ class Corpus:
     has_template: bool
 
 @dataclass
-class CorpusTemplate:
+class ConfigTemplate:
     """Corpus template name and path."""
     path: Path
     label: str
@@ -71,13 +71,13 @@ def get_corpus_template(
         template_name: str | None,
         default_path: Path,
         corpus_path: Path
-) -> CorpusTemplate | None:
+) -> ConfigTemplate | None:
     """Get corpus template for path (if exists)."""
     if not corpus_path.is_dir():
         return None
 
     if not template_name:
-        return CorpusTemplate(path=default_path, label="generic")
+        return ConfigTemplate(path=default_path, label="generic")
 
     template_path = corpus_path / "experiment.yml.template"
     template_label = ""
@@ -87,14 +87,14 @@ def get_corpus_template(
         template_path = default_path
         template_label = f"generic (no template found for {template_name}"
 
-    return CorpusTemplate(path=template_path, label=template_label)
+    return ConfigTemplate(path=template_path, label=template_label)
 
 
 def make_experiment_dir(
         num: int,
         exp_dir: Path,
         root_dir: Path,
-        config_template: CorpusTemplate):
+        config_template: ConfigTemplate):
     """Create the experiment directory."""
     exp_name = f"{num:03d}"
     exp_subdir = exp_dir / exp_name
@@ -124,7 +124,6 @@ def main():
     args = parser.parse_args()
 
     root = get_sphinx_root()
-    # TODO idk if these path names should be hardcoded.
     corpus_dir = root / "corpus"
     experiments_dir = root / "experiments"
     root_template = root / "experiment.yml.template"
@@ -138,10 +137,13 @@ def main():
         sys.exit(0)
 
     # template
-    config_template = get_corpus_template(
-        args.template,
-        root_template,
-        corpus_dir / args.template)
+    if args.template:
+        config_template = get_corpus_template(
+            args.template,
+            root_template,
+            corpus_dir / args.template)
+    else:
+        config_template = ConfigTemplate(path=root_template, label="generic")
 
     if not config_template.path.is_file():
         err("template not found at {config_template.path}")
