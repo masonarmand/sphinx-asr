@@ -11,6 +11,7 @@ see scripts/corpus/librispeech.py as an example
 import importlib
 from pathlib import Path
 
+
 def get_adapter(corpus_name: str):
     """
     Load the corpus adapter module for a given corpus.

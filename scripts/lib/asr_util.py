@@ -5,6 +5,7 @@ import os
 import sys
 from pathlib import Path
 
+
 def err(msg: str):
     """Print error message to stderr and exit."""
     print(f"[ERROR] {msg}", file=sys.stderr)

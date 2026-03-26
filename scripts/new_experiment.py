@@ -9,14 +9,13 @@ Usage:
     new_experiment.py --list    list available corpora
 """
 
-from dataclasses import dataclass
 import argparse
 import shutil
 import sys
-import os
+from dataclasses import dataclass
 from pathlib import Path
 
-from lib.asr_util import (err, get_sphinx_root)
+from lib.asr_util import err, get_sphinx_root
 
 # TODO media wiki stuff
 

@@ -6,6 +6,7 @@ librispeech corpus adapter
 from pathlib import Path
 from typing import Iterator
 
+
 def get_utterances(
         corpus_dir: Path,
         split_name: str,

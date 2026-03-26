@@ -11,15 +11,15 @@ Usage:
 
 import argparse
 import os
-import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import subprocess
 import platform
 import shutil
+import subprocess
+import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+from lib.asr_util import err, get_sphinx_root
 from lib.config import load_corpus
-from lib.asr_util import (get_sphinx_root, err)
 
 # formats sphinx_fe can directly read (without sox)
 NATIVE_FORMATS = {"wav", "mswav", "nist", "raw", "sph"}
@@ -246,7 +246,7 @@ def main():
     skipped = 0
     failed = 0
     if args.split == "all":
-        split_list = [split for split in corpus["splits"]]
+        split_list = list(corpus["splits"])
         print("Generating features for the following splits:")
         for split in split_list:
             print(f"  {args.corpus}/{split}")

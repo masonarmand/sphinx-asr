@@ -17,15 +17,16 @@ Usage:
     setup.py <experiment_dir>
 """
 
-from dataclasses import dataclass
 import argparse
 import re
 import shutil
+from dataclasses import dataclass
 from pathlib import Path
 
-from corpus import get_adapter
-from lib.config import (generate_sphinx_train_cfg, load_experiment)
 from lib.asr_util import get_sphinx_root
+from lib.config import generate_sphinx_train_cfg, load_experiment
+
+from corpus import get_adapter
 
 
 @dataclass

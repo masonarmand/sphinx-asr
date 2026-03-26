@@ -6,12 +6,13 @@ Usage:
     train.py <experiment_dir>
 """
 
-import time
 import argparse
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
+
 from lib.asr_util import get_sphinx_root
 
 STEPS = [
