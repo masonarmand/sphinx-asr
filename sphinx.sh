@@ -55,6 +55,12 @@ case "$COMMAND" in
     new)
         python3 "$SCRIPT_DIR/scripts/new_experiment.py" "$@"
         ;;
+    setup)
+        python3 "$SCRIPT_DIR/scripts/setup.py" "$@"
+        ;;
+    train)
+        run_script "train.py" "$@"
+        ;;
     # TODO all the other sub-scripts
     *)
         usage
