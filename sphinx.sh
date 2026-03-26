@@ -61,6 +61,9 @@ case "$COMMAND" in
     train)
         run_script "train.py" "$@"
         ;;
+    feats)
+        python3 "$SCRIPT_DIR/scripts/feats.py" "$@"
+        ;;
     # TODO all the other sub-scripts
     *)
         usage

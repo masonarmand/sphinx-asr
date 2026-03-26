@@ -63,10 +63,23 @@ def load_experiment(exp_dir: Path, sphinx_root: Path) -> dict:
     experiment = load_yaml(exp_yml)
 
     # resolve training corpus references
-    for entry in experiment.get("train", {}).get("corpora", []):
+    raw_corpora = experiment.get("train", {}).get("corpora", [])
+    expanded = []
+    for entry in raw_corpora:
         corpus = load_corpus(entry["name"], sphinx_root)
-        _validate_split(entry["name"], entry["split"], corpus)
-        entry["_corpus"] = corpus
+
+        splits = entry.get("splits", [])
+        if "split" in entry:
+            splits.append(entry["split"])
+
+        for split_name in splits:
+            _validate_split(entry["name"], split_name, corpus)
+            expanded.append({
+                "name": entry["name"],
+                "split": split_name,
+                "_corpus": corpus
+            })
+    experiment["train"]["corpora"] = expanded
 
     # resolve decode corpus reference
     decode_corpus = experiment.get("decode", {}).get("corpus", {})
@@ -130,6 +143,7 @@ def generate_sphinx_train_cfg(
         )
 
     overrides["CFG_WAVFILES_DIR"] = str(sphinx_root)
+    overrides["CFG_FEATFILES_DIR"] = str(sphinx_root)
 
     # LM path
     decode_cfg = experiment.get("decode", {})
