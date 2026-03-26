@@ -26,6 +26,12 @@ install: sphinxtrain
 	cp $(POCKETSPHINX_BUILD)/pocketsphinx_batch $(PREFIX)/
 	cp $(POCKETSPHINX_BUILD)/pocketsphinx_lm_convert $(PREFIX)/
 
+link:
+	ln -sf $(CURDIR)/sphinx.sh /usr/local/bin/sphinx
+
+unlink:
+	rm -f /usr/local/bin/sphinx
+
 clean:
 	rm -rf $(SPHINXTRAIN_BUILD) $(POCKETSPHINX_BUILD)
 	rm -rf $(PREFIX)
