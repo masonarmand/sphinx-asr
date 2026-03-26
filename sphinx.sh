@@ -7,7 +7,7 @@
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 VENV_DIR="$SCRIPT_DIR/.venv"
 
 if [ ! -f "$VENV_DIR/bin/python3" ]; then
@@ -25,22 +25,18 @@ export PATH="$SCRIPT_DIR/bin/$ARCH:$PATH"
 export SPHINXTRAIN_DIR="$SCRIPT_DIR/vendor/sphinxtrain"
 export SPHINXTRAIN_BIN_DIR="$SCRIPT_DIR/bin/$ARCH"
 
-COMMAND="$1"
-shift || true
+COMMAND="${1:-}"
+[ $# -gt 0 ] && shift
 
 usage() {
     echo "Usage: sphinx.sh <command> [args]"
     echo ""
     echo "Commands:"
     echo "  new [-t CORPUS] [-l] Create a new experiment (default template, or specify corpus)"
-    # TODO
-    # - setup?
-    # - feats? I think feats will run only if feats dont already exist
-    # - train
-    # - decode
-    # - score (would be cool if score could output matplotlib graphs and stuff idk,
-    #          maybe there would be a separate script for that)
-    # - corpora - could list all available copora and splits?
+    echo "  setup <exp_dir>        Generate sphinxtrain files from experiment.yml"
+    echo "  feats <corpus> <split> Extract features (once per corpus split)"
+    echo "  train <exp_dir>        Run training"
+    echo "  decode <exp_dir>       Run decoding"
     exit 1
 }
 
@@ -71,10 +67,12 @@ case "$COMMAND" in
     train)
         run_script "train.py" "$@"
         ;;
+    decode)
+        run_script "decode.py" "$@"
+        ;;
     feats)
         $PYTHON "$SCRIPT_DIR/scripts/feats.py" "$@"
         ;;
-    # TODO all the other sub-scripts
     *)
         usage
         ;;
