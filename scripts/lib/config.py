@@ -10,7 +10,7 @@ import re
 import sys
 from pathlib import Path
 
-from .asr_util import (err, get_sphinx_root)
+from .asr_util import err, get_sphinx_root
 
 # TODO maybe we should have a requirements.txt and a venv, but idk i dont want
 # to complicate things.
@@ -22,13 +22,72 @@ except ImportError:
 
 def load_yaml(path: Path) -> dict:
     """Load a yaml file and return its contents."""
-    with open(path) as f:
-        data = yaml.safe_load(f)
+    try:
+        with open(path) as f:
+            data = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        raise ValueError(f"{path}: invalid YAML syntax\n{e}") from e
     if data is None:
         return {}
     if not isinstance(data, dict):
         raise TypeError(f"Expected yaml mapping in {path}")
     return data
+
+
+def validate_experiment(experiment: dict, exp_yml: Path):
+    """
+    Validate the experiment.yml structure and give clear error messages
+    """
+    errors = []
+    # top level
+    if not isinstance(experiment, dict):
+        err(f"{exp_yml}: file is empty or malformed")
+
+    # train section
+    train = experiment.get("train")
+    if not isinstance(train, dict):
+        errors.append("missing 'train:' section")
+    else:
+        corpora = train.get("corpora")
+        if not isinstance(corpora, list) or len(corpora) == 0:
+            errors.append("train.corpora: must be a non-empty list")
+        else:
+            for i, entry in enumerate(corpora):
+                if not isinstance(entry, dict):
+                    errors.append(
+                        f"train.corpora[{i}]: must be a mapping, not "
+                        f"{type(entry).__name__}"
+                    )
+                    continue
+                if "name" not in entry:
+                    errors.append(f"train.corpora[{i}]: missing 'name'")
+                if "split" not in entry:
+                    errors.append(
+                        f"train.corpora[{i}]: missing 'split' or 'splits'"
+                    )
+
+    # decode section
+    decode = experiment.get("decode")
+    if not isinstance(decode, dict):
+        errors.append("missing 'decode:' section")
+    else:
+        corpus = decode.get("corpus")
+        if not isinstance(corpus, dict):
+            errors.append("decode.corpus: must be a mapping")
+        else:
+            if "name" not in corpus:
+                errors.append("decode.corpus: missing 'name'")
+            if "split" not in corpus:
+                errors.append("decode.corpus: missing 'split'")
+
+    st = experiment.get("sphinxtrain")
+    if st is not None and not isinstance(st, dict):
+        errors.append("sphinxtrain: must be a mapping of key: value pairs")
+
+    if errors:
+        msg = f"{exp_yml}: configuration errors:\n"
+        msg += "\n".join(f"  - {e}" for e in errors)
+        err(msg)
 
 
 def load_corpus(corpus_name: str, sphinx_root: Path) -> dict:
@@ -41,7 +100,7 @@ def load_corpus(corpus_name: str, sphinx_root: Path) -> dict:
 
     if not corpus_yml.is_file():
         raise FileNotFoundError(
-            f"corpus.yml not found for {corpus.name} at {corpus_yml}"
+            f"corpus.yml not found for {corpus_dir.name} at {corpus_yml}"
         )
 
     data = load_yaml(corpus_yml)
@@ -61,6 +120,7 @@ def load_experiment(exp_dir: Path, sphinx_root: Path) -> dict:
         raise FileNotFoundError(f"experiment.yml not found at {exp_yml}")
 
     experiment = load_yaml(exp_yml)
+    validate_experiment(experiment, exp_yml)
 
     # resolve training corpus references
     raw_corpora = experiment.get("train", {}).get("corpora", [])
