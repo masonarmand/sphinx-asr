@@ -1,5 +1,36 @@
 # sphinx-asr
 
+## TODO
+- [ ] make experiments/sub experiment dirs match whats currently in use
+- [ ] make `sphinx new` create a wiki entry (if prof allows)
+  - [ ] Maybe also optionally upload results of training/decoding to wiki entry automatically
+  - [ ] wiki bot credentials and other stuff could go in config.yml (gitignored)
+- [ ] ensure everything works with NFS queue and torque
+- [ ] document `sphinxtrain` parameters somewhere
+
+## Usage cheatsheet
+```
+Usage: sphinx.sh <command> [args]
+
+Commands:
+  new [-t CORPUS] [-l] Create a new experiment (default template, or specify corpus)
+  setup <exp_dir>        Generate sphinxtrain files from experiment.yml
+  feats <corpus> <split> Extract features (once per corpus split)
+  train <exp_dir>        Run training
+  decode <exp_dir>       Run decoding
+```
+
+Example of the full pipeline:
+```
+sphinx new --list  # list available corpora templates
+
+sphinx new --template librispeech   # created numbered experiment dir
+nano experiments/001/experiment.yml # edit the config
+sphinx setup experiments/001        # setup experiment
+sphinx train experiments/001        # run a train
+sphinx decode experiments/001       # run a decode
+```
+
 ## Setting up the project
 
 ### Building
