@@ -22,7 +22,7 @@ splits:
 
   train-other-500:
     description: "500 hours of noisier read speech (training)"
-    hours: 496.7
+    hours: 496.9
     audio: train-other-500/
 
   dev-clean:
@@ -32,7 +32,7 @@ splits:
 
   dev-other:
     description: "Development set, noisier speech"
-    hours: 5.3
+    hours: 5.1
     audio: dev-other/
 
   test-clean:
@@ -42,5 +42,5 @@ splits:
 
   test-other:
     description: "Test set, noisier speech"
-    hours: 5.1
+    hours: 5.3
     audio: test-other/
