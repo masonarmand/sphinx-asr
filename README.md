@@ -54,12 +54,12 @@ most scenarios would be `bin/x86_64`.
 
 ### sphinx.sh
 This script is the only script you will have to interact with. You can either
-run it manually `./script.sh` (assuming you are under the repo folder), or you
+run it manually `./sphinx.sh` (assuming you are under the repo folder), or you
 can add a symlink to the script by running:
 ```
 sudo make link
 ```
-in which case you would be able to just run `sphinx` from anywhere.
+in which case you would be able to just run `sphinx` (without the `.sh`) from anywhere.
 
 ### Corpora
 The corpora are stored under the `corpus/` directory. Each corpus has the following
