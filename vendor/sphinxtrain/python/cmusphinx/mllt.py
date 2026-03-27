@@ -20,6 +20,7 @@ import sys
 try:
     from numpy import sum, dot, diag, log, eye, sqrt, newaxis, concatenate
     from numpy.linalg import det, inv
+    from numpy.random import random
     from scipy.optimize import fmin_l_bfgs_b
 except ImportError:
     print("FATAL: Failed to import numpy modules. "
@@ -102,8 +103,8 @@ class MLLTModel(object):
             s = self.cov[0].shape
             d = -1
             while d < 0:
-                #                A = eye(s[0]) + 0.1 * random(s)
-                A = eye(s[0])
+                A = eye(s[0]) + 0.1 * random(s)
+                #A = eye(s[0])
                 d = det(A)
 
         # Flatten out the matrix so scipy.optimize can handle it
