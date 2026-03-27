@@ -68,6 +68,3 @@ sphinxtrain:
 
   # decoding parallelism
   DEC_CFG_NPART: 8
-
-  # automatically generate pronunciations for words not in the dictionary:
-  CFG_G2P_MODEL: "yes"

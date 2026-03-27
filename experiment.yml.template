@@ -45,5 +45,3 @@ sphinxtrain:
   # DEC_CFG_WORDBEAM: "1e-40"
   # DEC_CFG_WORDPENALTY: "0.2"
   DEC_CFG_NPART: 1
-
-  # CFG_G2P_MODEL: "no"
