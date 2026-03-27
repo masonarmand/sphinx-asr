@@ -1,35 +1,111 @@
 # sphinx-asr
 
+## Setting up the project
+
+### Building
+`sphinx-asr` uses `SphinxTrain` for training and `PocketSphinx` for decoding.
+To build these run:
+```
+make
+```
+This will output the binaries under `bin/<your-computer-architecture>` (which in
+most scenarios would be `bin/x86_64`.
+
+### sphinx.sh
+This script is the only script you will have to interact with. You can either
+run it manually `./script.sh` (assuming you are under the repo folder), or you
+can add a symlink to the script by running:
+```
+sudo make link
+```
+in which case you would be able to just run `sphinx` from anywhere.
+
+### Corpora
+The corpora are stored under the `corpus/` directory. Each corpus has the following
+directory structure:
+```
+corpus/
+  corpus_name/
+    corpus.yml
+    experiment.yml.template
+    dict/
+    lm/
+    <corpus specific files>
+```
+- `corpus.yml`: contains information about the corpus and info about each of the splits
+- `experiment.yml.template`: Corpus-specific experiment template configuration file
+- `dict/`: Folder containing lexicons/dictionaries
+- `lm`: Folder containing language models
+
+Use `sphinx feats` to generate feats for a corpus (the .mfc files).
+```
+sphinx feats librispeech dev-clean # generates feats for dev-clean split 
+                                   # under librispeech
+sphinx feats librispeech all # generates feats for all splits under the
+                             # librispeech corpus.
+```
+
+Each corpus usually has its own format, so a parser must be created for
+each new corpus to convert the format into something that is readable by
+sphinxtrain. See `scripts/corpus` for corpus-specific parsers.
+
+## Experiments
+
+### 1. Creating a new experiment
+run: 
+```
+sphinx new
+```
+This will create a numbered experiment directory under `experiments/` using
+the default template. If you would like to use a corpus template pass the `-t` or 
+`--template` argument. E.g for librispeech:
+```
+sphinx new -t librispeech
+```
+
+### 2. Modifying experiment.yml
+experiment.yml defines the following:
+- experiment name
+- experiment author
+- what corpora & splits to train on
+- what corpus split to decode on
+- `sphinx_train.cfg` parameter overrides.
+
+The experiment configuration allows you to list multiple corpora and multiple splits
+for training.  
+Example:
+```
+train:
+  corpora:
+    - name: librispeech
+      splits:
+      - train-clean-100
+      - train-clean-360
+    - name: switchboard
+      splits:
+      - 145hr
+      - 300hr
+```
+
+### 3. Setting up the experiment
+run:
+```
+sphinx setup experiments/your-experiment-number
+```
+This will create the directory structure, as well as things like the `sphinx_train.cfg`
+which is generated from your `experiment.yml`.
+
+### 4. Training and Decoding
+To run a train:
+```
+sphinx train experiments/your-experiment-number
+```
+To run a decode:
+```
+sphinx decode experiments/your-experiment-number
+```
+
 ## Useful Resources
 - [Sphinx-3 Decoder](https://www.cs.cmu.edu/~archan/s_info/Sphinx3/doc/s3_description.html)
 - [The Incomplete Guide to Sphinx-3 Performance Tuning](https://cmusphinx.github.io/wiki/decodertuning/)
 
-## TODO
-- [X] Replace Dockerfile with a simple makefile? (now that im simplifying things, i realize
-that we prob dont need docker because CMU sphinx tools have like zero dependencies. its just
-raw C)
-- [ ] Documentation
-  - [ ] README
-  - [ ] Documentation/comments in default `experiment.yml`
-- [ ] Setup guide & usage
-- [ ] Style guide for python & bash so codebase stays consisten in the future
-- [ ] Scripts that accomplis the following:
-  - [X] make exp dir
-  - [X] functions to generate `sphinx_train.cfg` from yaml
-  - [X] setup exp dir
-  - [X] run train
-  - [ ] decode train
-  - [ ] gen feats
-  - [ ] ensure everything works on both:
-    - [ ] local machine
-    - [ ] torque queue
-- [ ] Config
-  - [ ] find out what default config params should be included in `experiment.yml` for:
-    - [ ] default
-    - [ ] librispeech
-    - [ ] switchboard
-- [ ] Parser
-  - [ ] librispeech parser/setup (call sphinxtrains internal included scripts)
-  - [ ] Switchboard parser/setup script
-- [X] Script for creating a corpus directory (creates yaml files and directory structure)
-- [ ] genfeats once per corpus instead of per experiment
