@@ -13,22 +13,32 @@
 Usage: sphinx.sh <command> [args]
 
 Commands:
-  new [-t CORPUS] [-l] Create a new experiment (default template, or specify corpus)
-  setup <exp_dir>        Generate sphinxtrain files from experiment.yml
-  feats <corpus> <split> Extract features (once per corpus split)
-  train <exp_dir>        Run training
-  decode <exp_dir>       Run decoding
+  new [-t CORPUS] [-l]
+  setup <exp_dir>
+  feats <corpus> <split> 
+  train <exp_dir>
+  decode <exp_dir>      
 ```
 
 Example of the full pipeline:
 ```
-sphinx new --list  # list available corpora templates
+# list available corpus templates
+sphinx new --list
 
-sphinx new --template librispeech   # created numbered experiment dir
-nano experiments/001/experiment.yml # edit the config
-sphinx setup experiments/001        # setup experiment
-sphinx train experiments/001        # run a train
-sphinx decode experiments/001       # run a decode
+# creates numbered experiment dir
+sphinx new --template librispeech
+
+# edit the config parameters in editor of your choice
+nano experiments/001/experiment.yml
+
+# setup experiment
+sphinx setup experiments/001
+
+# run a train
+sphinx train experiments/001
+
+# run a decode
+sphinx decode experiments/001
 ```
 
 ## Setting up the project
