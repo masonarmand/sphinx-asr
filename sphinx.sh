@@ -34,9 +34,10 @@ usage() {
     echo "Commands:"
     echo "  new [-t CORPUS] [-l] Create a new experiment (default template, or specify corpus)"
     echo "  setup <exp_dir>        Generate sphinxtrain files from experiment.yml"
-    echo "  feats <corpus> <split> Extract features (once per corpus split)"
     echo "  train <exp_dir>        Run training"
     echo "  decode <exp_dir>       Run decoding"
+    echo "  feats <corpus> <split> Extract features (once per corpus split)"
+    echo "  lm <corpus> <split>    build a trigram language model from training transcripts"
     exit 1
 }
 
@@ -72,6 +73,9 @@ case "$COMMAND" in
         ;;
     feats)
         $PYTHON "$SCRIPT_DIR/scripts/feats.py" "$@"
+        ;;
+    lm)
+        $PYTHON "$SCRIPT_DIR/scripts/lm.py" "$@"
         ;;
     *)
         usage
