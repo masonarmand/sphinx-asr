@@ -1,4 +1,5 @@
 # sphinx-asr
+Sphinx Automatic Speech Recognition. This repo contains a set of scripts & utilities that serve as wrappers around CMU SphinxTrain and CMU PocketSphinx.
 
 ## TODO
 - [ ] make experiments/sub experiment dirs match whats currently in use
@@ -7,6 +8,9 @@
   - [ ] wiki bot credentials and other stuff could go in config.yml (gitignored)
 - [ ] ensure everything works with NFS queue and torque
 - [ ] document `sphinxtrain` parameters somewhere
+- [ ] `sphinx search` command for searching experiments by name, description, author, corpora-used
+  - [ ] could have an option to show all experiments that contain trained models
+- [ ] A 'legacy' flag for decoding `sphinx decode --legacy experiments/001/`, which would use the old Sphinx3/SphinxBase decoder. This could be used to compare the WER with PocketSphinx to make sure there's no dramatic differences.
 
 ## Usage cheatsheet
 ```
