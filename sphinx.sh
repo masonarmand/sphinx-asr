@@ -20,7 +20,7 @@ fi
 PYTHON="$VENV_DIR/bin/python3"
 ARCH="$(uname -m)"
 export SPHINX_ROOT="$SCRIPT_DIR"
-export PATH="$SCRIPT_DIR/bin/$ARCH:$PATH"
+export PATH="$VENV_DIR/bin:$SCRIPT_DIR/bin/$ARCH:$PATH"
 
 export SPHINXTRAIN_DIR="$SCRIPT_DIR/vendor/sphinxtrain"
 export SPHINXTRAIN_BIN_DIR="$SCRIPT_DIR/bin/$ARCH"
