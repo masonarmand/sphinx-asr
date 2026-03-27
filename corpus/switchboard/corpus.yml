@@ -1,0 +1,87 @@
+# Switchboard corpus configuration
+# Source: LDC (via UNH CSMR lab)
+#
+# switchboard is telephone conversation speech. audio is 8khz mono sph.
+# all audio lives in full/train/audio/utt/ regardless of split.
+# splits are defined by which utterances appear in transcript files.
+
+name: switchboard
+audio_format: sph
+audio_type: nist
+sample_rate: 8000
+
+# feat extraction params
+num_filt: 15
+lo_filt: 200
+hi_filt: 3500
+
+dict: dist/dict/custom/master.dic
+
+# audio is shared across all splits
+audio_dir: full/train/audio/utt
+
+fillers:
+  "[NOISE]": "+noise+"
+  "[LAUGHTER]": "+laugh+"
+  "[VOCALIZED-NOISE]": "+vocalized+"
+
+splits:
+  1hr-train:
+    description: "1 hour training set"
+    transcripts: 1hr/train/trans/train.trans
+
+  1hr-dev:
+    description: "1 hour dev evaluation"
+    transcripts: 1hr/test/trans/dev.trans
+
+  1hr-eval:
+    description: "1 hour eval evaluation"
+    transcripts: 1hr/test/trans/eval.trans
+
+  5hr-train:
+    description: "5 hour training set"
+    transcripts: 5hr/train/trans/train.trans
+
+  5hr-dev:
+    description: "5 hour dev evaluation"
+    transcripts: 5hr/test/trans/dev.trans
+
+  5hr-eval:
+    description: "5 hour eval evaluation"
+    transcripts: 5hr/test/trans/eval.trans
+
+  30hr-train:
+    description: "30 hour training set"
+    transcripts: 30hr/train/trans/train.trans
+
+  30hr-dev:
+    description: "30 hour dev evaluation"
+    transcripts: 30hr/test/trans/dev.trans
+
+  30hr-eval:
+    description: "30 hour eval evaluation"
+    transcripts: 30hr/test/trans/eval.trans
+
+  145hr-train:
+    description: "145 hour training set"
+    transcripts: 145hr/train/trans/train.trans
+
+  145hr-dev:
+    description: "145 hour dev evaluation"
+    transcripts: 145hr/test/trans/dev.trans
+
+  145hr-eval:
+    description: "145 hour eval evaluation"
+    transcripts: 145hr/test/trans/eval.trans
+
+  300hr-train:
+    description: "300 hour training set"
+    transcripts: 300hr/train/trans/train.trans
+
+  300hr-dev:
+    description: "300 hour dev evaluation"
+    transcripts: 300hr/test/trans/dev.trans
+
+  300hr-eval:
+    description: "300 hour eval evaluation"
+    transcripts: 300hr/test/trans/eval.trans

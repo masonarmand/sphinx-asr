@@ -1,0 +1,30 @@
+name: ""
+author: ""
+
+train:
+  corpora:
+    - name: switchboard
+      splits:
+        - 1hr-train
+
+decode:
+  corpus:
+    name: switchboard
+    split: 1hr-dev
+
+sphinxtrain:
+  CFG_CMN: "current"
+  CFG_CASEDSYMBOLS: "yes"
+  CFG_HMM_TYPE: ".cont."
+  CFG_STATESPERHMM: 3
+  CFG_SKIPSTATE: "yes"
+  CFG_INITIAL_NUM_DENSITIES: 1
+  CFG_FINAL_NUM_DENSITIES: 8
+  CFG_N_TIED_STATES: 1000
+  CFG_LDA_MLLT: "yes"
+  CFG_LDA_DIMENSION: 32
+  CFG_CONVERGENCE_RATIO: 0.04
+  CFG_NPART: 12
+  CFG_QUEUE_TYPE: "Queue::POSIX"
+  DEC_CFG_NPART: 12
+  CFG_G2P_MODEL: "no"
