@@ -25,7 +25,7 @@ Example of the full pipeline:
 # list available corpus templates
 sphinx new --list
 
-# creates numbered experiment dir
+# create a numbered experiment dir
 sphinx new --template librispeech
 
 # edit the config parameters in editor of your choice
