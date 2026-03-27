@@ -36,12 +36,16 @@ def find_sphinx_fe(root: Path) -> Path:
     err("sphinx_fe not found.")
 
 
+# TODO just pass corpus_config
 def extract_one(
         sphinx_fe: str,
         audio_file: Path,
         mfc_file: Path,
         audio_ext: str,
-        sample_rate: int
+        sample_rate: int,
+        num_filt: int = 25,
+        lo_filt: int = 130,
+        hi_filt: int = 6800,
 ) -> bool:
     """
     Extract features for a single audio file.
@@ -53,9 +57,9 @@ def extract_one(
         "-o", str(mfc_file),
         "-input_endian", "little",
         "-samprate", str(sample_rate),
-        "-nfilt", "25",
-        "-lowerf", "130",
-        "-upperf", "6800",
+        "-nfilt", str(num_filt),
+    "-lowerf", str(lo_filt),
+        "-upperf", str(hi_filt),
         "-transform", "dct",
         "-lifter", "22",
     ]
@@ -89,7 +93,10 @@ def extract_features(
         audio_dir: Path,
         audio_ext: str,
         sample_rate: int,
-        jobs: int
+        num_filt: int = 25,
+        lo_filt: int = 130,
+        hi_filt: int = 6800,
+        jobs: int = 1
 ) -> tuple[int, int, int]:
     """
     extract MFC features for all audio files in a directory.
@@ -128,7 +135,16 @@ def extract_features(
     def _do_one(pair):
         audio_file, mfc_file = pair
         mfc_file.parent.mkdir(parents=True, exist_ok=True)
-        return extract_one(fe_str, audio_file, mfc_file, audio_ext, sample_rate)
+        return extract_one(
+            fe_str,
+            audio_file,
+            mfc_file,
+            audio_ext,
+            sample_rate,
+            num_filt,
+            lo_filt,
+            hi_filt
+        )
 
     with ThreadPoolExecutor(max_workers=jobs) as pool:
         futures = {pool.submit(_do_one, pair): pair for pair in to_extract}
@@ -185,9 +201,15 @@ def process_split(
 
     split_cfg = splits[split]
     corpus_dir = corpus_config["_dir"]
-    audio_dir = corpus_dir / split_cfg.get("audio", split)
+    audio_rel = split_cfg.get("audio") or corpus_config.get("audio_dir")
+    if not audio_rel:
+        err(f"no audio directory defined for split '{split}' or corpus")
+    audio_dir = corpus_dir / audio_rel
     audio_ext = corpus_config.get("audio_format", "wav")
     sample_rate = int(corpus_config.get("sample_rate", 16000))
+    num_filt = int(corpus_config.get("num_filt", 25))
+    lo_filt = int(corpus_config.get("lo_filt", 130))
+    hi_filt = int(corpus_config.get("hi_filt", 6800))
 
     if not audio_dir.is_dir():
         err(f"audio directory not found: {audio_dir}")
@@ -199,7 +221,16 @@ def process_split(
     print(f"  Format: {audio_ext} @ {sample_rate}Hz")
     print(f"  Jobs: {jobs}")
 
-    return extract_features(sphinx_fe, audio_dir, audio_ext, sample_rate, jobs)
+    return extract_features(
+        sphinx_fe,
+        audio_dir,
+        audio_ext,
+        sample_rate,
+        num_filt,
+        lo_filt,
+        hi_filt,
+        jobs
+    )
 
 
 def main():
@@ -241,7 +272,6 @@ def main():
 
     # load corpus config
     corpus = load_corpus(args.corpus, root)
-
     extracted = 0
     skipped = 0
     failed = 0

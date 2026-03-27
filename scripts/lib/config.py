@@ -197,6 +197,10 @@ def generate_sphinx_train_cfg(
             primary.get("sample_rate", 16000)
         )
 
+        overrides["CFG_NUM_FILT"] = int(primary.get("num_filt", 25))
+        overrides["CFG_LO_FILT"] = int(primary.get("lo_filt", 130))
+        overrides["CFG_HI_FILT"] = int(primary.get("hi_filt", 6800))
+
     overrides["CFG_WAVFILES_DIR"] = str(sphinx_root)
     overrides["CFG_FEATFILES_DIR"] = str(sphinx_root)
     overrides["DEC_CFG_FEATFILES_DIR"] = str(sphinx_root)

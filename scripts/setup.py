@@ -144,6 +144,15 @@ def generate_dictionary(
         root: Path,
         words: set[str]):
     """Build pruned dictionary, phone list, and filler dictionary."""
+    train_corpora = experiment.get("train", {}).get("corpora", [])
+
+    # exlude filler words from main dict
+    filler_words = {"<s>", "</s>", "<sil>"}
+    for entry in train_corpora:
+        for word in entry["_corpus"].get("fillers", {}).keys():
+            filler_words.add(word)
+    words = words - filler_words
+
     print(f"Building dictionary ({len(words)} unique words)...")
     dict_path = _resolve_dict_path(experiment, root)
 
@@ -181,6 +190,11 @@ def generate_dictionary(
 
     # save phone list
     dictionary.phones.add("SIL")
+    # corpus specific fillers:
+    for entry in train_corpora:
+        for phone in entry["_corpus"].get("fillers", {}).values():
+            dictionary.phones.add(phone)
+
     phone_file = exp_dir / "etc" / f"{db_name}.phone"
     with open(phone_file, "w") as f:
         for phone in sorted(dictionary.phones):
@@ -193,6 +207,11 @@ def generate_dictionary(
         f.write("<s> SIL\n")
         f.write("</s> SIL\n")
         f.write("<sil> SIL\n")
+        # corpus specific fillers
+        for entry in train_corpora:
+            corpus_fillers = entry["_corpus"].get("fillers", {})
+            for word, phone in corpus_fillers.items():
+                f.write(f"{word} {phone}\n")
     print(f"  Written: {filler_file.name}")
 
 
