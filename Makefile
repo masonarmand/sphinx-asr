@@ -7,6 +7,9 @@ POCKETSPHINX_SRC := vendor/pocketsphinx
 SPHINXTRAIN_BUILD := $(SPHINXTRAIN_SRC)/build
 POCKETSPHINX_BUILD := $(POCKETSPHINX_SRC)/build
 
+CMU_TOOLKIT_SRC := vendor/cmu_toolkit
+CMU_TOOLKIT_BIN := $(CMU_TOOLKIT_SRC)/bin
+
 .PHONY: all pocketsphinx sphinxtrain install clean
 
 all: install
@@ -19,12 +22,17 @@ sphinxtrain: pocketsphinx
 	cmake -S $(SPHINXTRAIN_SRC) -B $(SPHINXTRAIN_BUILD)
 	cmake --build $(SPHINXTRAIN_BUILD)
 
-install: sphinxtrain
+cmu_toolkit:
+	mkdir -p $(CMU_TOOLKIT_SRC)/bin $(CMU_TOOLKIT_SRC)/lib
+	cd $(CMU_TOOLKIT_SRC)/src && make install
+
+install: sphinxtrain cmu_toolkit
 	mkdir -p $(PREFIX)
 	find $(SPHINXTRAIN_BUILD) -maxdepth 1 -type f -executable -exec cp {} $(PREFIX)/ \;
 	cp $(POCKETSPHINX_BUILD)/pocketsphinx $(PREFIX)/
 	cp $(POCKETSPHINX_BUILD)/pocketsphinx_batch $(PREFIX)/
 	cp $(POCKETSPHINX_BUILD)/pocketsphinx_lm_convert $(PREFIX)/
+	cp $(CMU_TOOLKIT_BIN)/* $(PREFIX)/
 
 link:
 	ln -sf $(CURDIR)/sphinx.sh /usr/local/bin/sphinx
