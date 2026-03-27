@@ -6,6 +6,10 @@ audio_format: flac
 audio_type: sox
 sample_rate: 16000
 
+num_filt: 25
+lo_filt: 130
+hi_filt: 6800
+
 dict: dict/librispeech-lexicon.txt
 lm: lm/3-gram.pruned.3e-7.arpa.gz
 
