@@ -10,14 +10,9 @@ import re
 import sys
 from pathlib import Path
 
-from .asr_util import err, get_sphinx_root
+import yaml
 
-# TODO maybe we should have a requirements.txt and a venv, but idk i dont want
-# to complicate things.
-try:
-    import yaml
-except ImportError:
-    err("PyYAML is required. Install with: pip install pyyaml")
+from .asr_util import err, get_sphinx_root
 
 
 def load_yaml(path: Path) -> dict:
