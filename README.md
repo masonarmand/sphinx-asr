@@ -47,6 +47,25 @@ sphinx decode experiments/001
 
 ## Setting up the project
 
+### Dependencies
+
+Packages required: python3, python3-venv, perl, sox, make, gcc, and cmake.
+
+Ubuntu/Debian
+```
+sudo apt install build-essential cmake python3 python3-venv perl sox
+```
+
+Fedora/RHEL
+```
+sudo dnf install gcc gcc-c++ cmake python3 python3-devel perl sox
+```
+
+macOS
+```
+brew install cmake sox
+```
+
 ### Building
 `sphinx-asr` uses `SphinxTrain` for training and `PocketSphinx` for decoding.
 To build these run:
