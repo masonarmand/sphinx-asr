@@ -22,19 +22,19 @@ results obtained from use of this software.
 
 #include <stdio.h>
 #include <stdarg.h>
- 
-void pc_message(unsigned short verbosity, 
-	       unsigned short priority, 
+
+void pc_message(unsigned short verbosity,
+	       unsigned short priority,
 	       char *msg, ...) {
 
   va_list args ;
 
   if (priority <= verbosity) {
- 
+
     va_start(args,msg);
     vfprintf(stderr,msg,args) ;
-    va_end(msg);
-     
+    va_end(args);
+
   }
 
 }

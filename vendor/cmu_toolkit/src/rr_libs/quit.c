@@ -19,13 +19,14 @@ results obtained from use of this software.
 
 #include <stdio.h>
 #include <stdarg.h>
- 
+#include <stdlib.h>
+
 int quit(int rc, char *msg, ...)
 {
    va_list args ;
- 
+
    va_start(args,msg) ;
    vfprintf(stderr,msg,args) ;
-   va_end(msg) ;
+   va_end(args) ;
    exit(rc) ;
 }

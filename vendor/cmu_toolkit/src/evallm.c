@@ -24,6 +24,7 @@ results obtained from use of this software.
 #include "rr_libs/general.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void main (int argc, char **argv) {
 
@@ -60,15 +61,15 @@ void main (int argc, char **argv) {
 
   report_version(&argc,argv);
 
-  if (pc_flagarg(&argc, argv,"-help") || 
-      argc == 1 || 
+  if (pc_flagarg(&argc, argv,"-help") ||
+      argc == 1 ||
       (strcmp(argv[1],"-binary") && strcmp(argv[1],"-arpa"))) {
    fprintf(stderr,"evallm : Evaluate a language model.\n");
    fprintf(stderr,"Usage : evallm [ -binary .binlm | \n");
    fprintf(stderr,"                 -arpa .arpa [ -context .ccs ] ]\n");
    exit(1);
   }
-  
+
 
   lm_filename_arpa = salloc(pc_stringarg(&argc, argv,"-arpa",""));
 
@@ -91,7 +92,7 @@ void main (int argc, char **argv) {
   if (arpa_lm && binary_lm) {
     quit(-1,"Error : Can't use both -arpa and -binary flags.\n");
   }
-  
+
   if (!arpa_lm && !binary_lm) {
     quit(-1,"Error : Must specify either a binary or an arpa format language model.\n");
   }
@@ -103,7 +104,7 @@ void main (int argc, char **argv) {
   }
 
   pc_report_unk_args(&argc,argv,2);
- 
+
   /* Load language model */
 
   if (arpa_lm) {
@@ -114,7 +115,7 @@ void main (int argc, char **argv) {
   else {
     fprintf(stderr,"Reading in language model from file %s\n",
 	    lm_filename_binary);
-    load_lm(&ng,lm_filename_binary); 
+    load_lm(&ng,lm_filename_binary);
   }
 
   fprintf(stderr,"\nDone.\n");
@@ -127,8 +128,8 @@ void main (int argc, char **argv) {
   }
 
   if (arpa_lm) {
-    arpa_ng.context_cue = 
-      (flag *) rr_calloc(arpa_ng.table_sizes[0],sizeof(flag));    
+    arpa_ng.context_cue =
+      (flag *) rr_calloc(arpa_ng.table_sizes[0],sizeof(flag));
     arpa_ng.no_of_ccs = 0;
     if (strcmp(ccs_filename,"")) {
       context_cues_fp = rr_iopen(ccs_filename);
@@ -143,12 +144,12 @@ void main (int argc, char **argv) {
 	  fprintf(stderr,     "         (comments must start with '##')\n");
 	  fprintf(stderr,"===========================================================\n\n");
 	}
-	
-	
+
+
 	if (sih_lookup(arpa_ng.vocab_ht,current_cc,&current_cc_id) == 0) {
 	  quit(-1,"Error : %s in the context cues file does not appear in the vocabulary.\n",current_cc);
 	}
-	
+
 	arpa_ng.context_cue[(unsigned short) current_cc_id] = 1;
 	arpa_ng.no_of_ccs++;
 	fprintf(stderr,"Context cue word : %s id = %d\n",current_cc,current_cc_id);
@@ -158,13 +159,14 @@ void main (int argc, char **argv) {
   }
 
   /* Process commands */
-  
+
   told_to_quit = 0;
   num_of_args = 0;
 
   while (!feof(stdin) && !told_to_quit) {
     printf("evallm : ");
-    gets(input_string);
+    //gets(input_string);
+    fgets(input_string, sizeof(input_string), stdin);
 
     if (!feof(stdin)) {
       parse_comline(input_string,&num_of_args,args);
@@ -182,18 +184,18 @@ void main (int argc, char **argv) {
       include_unks = pc_flagarg(&num_of_args,args,"-include_unks");
       fb_list_filename = salloc(pc_stringarg(&num_of_args,args,
 					     "-backoff_from_list",""));
-    
-      text_stream_filename = 
+
+      text_stream_filename =
 	salloc(pc_stringarg(&num_of_args,args,"-text",""));
-      probs_stream_filename = 
+      probs_stream_filename =
 	salloc(pc_stringarg(&num_of_args,args,"-probs",""));
-      annotation_filename = 
+      annotation_filename =
 	salloc(pc_stringarg(&num_of_args,args,"-annotate",""));
       oov_filename = salloc(pc_stringarg(&num_of_args,args,"-oovs",""));
 
 
       inconsistant_parameters = 0;
-    
+
       if (backoff_from_unk_inc && backoff_from_unk_exc) {
 	fprintf(stderr,"Error : Cannot specify both exclusive and inclusive forced backoff.\n");
 	fprintf(stderr,"Use only one of -backoff_from_unk_exc and -backoff_from_unk_inc\n");
@@ -207,7 +209,7 @@ void main (int argc, char **argv) {
       }
 
       if (num_of_args > 0) {
-      
+
 	if (!inconsistant_parameters) {
 	  if (!strcmp(args[0],"perplexity")) {
 	    compute_perplexity(&ng,
@@ -233,9 +235,9 @@ void main (int argc, char **argv) {
 			n-1);
 	      }
 	      else {
-	      
+
 		/* Assume last n-1 parameters form context */
-	      
+
 		validate(&ng,
 			 &arpa_ng,
 			 &(args[num_of_args-n+1]),
@@ -309,10 +311,10 @@ void main (int argc, char **argv) {
 		    printf("\n");
 		    printf("Syntax: \n");
 		    printf("\n");
-		    printf("quit\n");	
+		    printf("quit\n");
 
-		  } 
-	      
+		  }
+
 		  else {
 		    fprintf(stderr,"Unknown command : %s\nType \'help\'\n",
 			    args[0]);
@@ -323,16 +325,16 @@ void main (int argc, char **argv) {
 	  }
 	}
       }
-    }    
+    }
   }
 
   fprintf(stderr,"evallm : Done.\n");
 
   exit(0);
-  
+
 }
 
-    
-    
-    
+
+
+
 
