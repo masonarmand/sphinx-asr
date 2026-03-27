@@ -50,6 +50,12 @@ sphinx decode experiments/001
 ### Dependencies
 
 Packages required: python3, python3-venv, perl, sox, make, gcc, and cmake.
+Also, sphinxtrain refers to `python3` as `python` so you will either need
+a symlink linking python3 to python (if one does not exist already), or on 
+ubuntu you could install:
+```
+sudo apt install python-is-python3
+```
 
 Ubuntu/Debian
 ```
