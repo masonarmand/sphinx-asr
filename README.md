@@ -2,15 +2,34 @@
 Sphinx Automatic Speech Recognition. This repo contains a set of scripts & utilities that serve as wrappers around CMU SphinxTrain and CMU PocketSphinx.
 
 ## TODO
-- [ ] make experiments/sub experiment dirs match whats currently in use
-- [ ] make `sphinx new` create a wiki entry (if prof allows)
-  - [ ] Maybe also optionally upload results of training/decoding to wiki entry automatically
-  - [ ] wiki bot credentials and other stuff could go in config.yml (gitignored)
-- [ ] ensure everything works with NFS queue and torque
-- [ ] document `sphinxtrain` parameters somewhere
-- [ ] `sphinx search` command for searching experiments by name, description, author, corpora-used
-  - [ ] could have an option to show all experiments that contain trained models
-- [ ] A 'legacy' flag for decoding `sphinx decode --legacy experiments/001/`, which would use the old Sphinx3/SphinxBase decoder. This could be used to compare the WER with PocketSphinx to make sure there's no dramatic differences.
+### General
+- [ ] Multi-Corpora training + corpus compatibilty verification
+- [ ] `train.py` - show warnings & errors from logs automatically
+- [ ] `config.yml` (root config) - number of jobs, enable/disable torque, wiki credentials
+### Feature Parity with old system
+- [ ] MediaWiki
+- [ ] WER scoring
+- [ ] MLLR speaker adaptation `sphinx adapt <exp> <speaker>` `sphinx decode --mllr`
+- [ ] MLLT seed control. Set `mllt_seed` to number or `random` in `experiment.yml`
+  - maybe an optional `mllt_trials: N` to run N seeds and keep the best.
+- [ ] `sphinx status` show running/queued jobs
+- [ ] `sphinx info <corpus> <split>` hours, utterance count, OOV
+- [ ] `sphinx new --from <exp>` create new expr but symlink a trained model from other experiment
+- [ ] `sphinx train --from-step <N>` resume from a specific step without starting over
+### New features (?)
+- [ ] `results.yml` - train & decode results.
+  - train
+    - time completed
+    - total time
+    - time for each step
+  - decode
+    - time completed
+    - total time
+    - WER
+    - counts for sentences/words/insertions/deletions/substitutions
+- [ ] `sphinx compare <exp1> <exp2> - diff the WER, config params, training time
+- [ ] `sphinx search` search experiments by name, author, description, corpora, etc
+- [ ] `sphinx clean <exp>` delete training artifacts but keep final model (to save on disk space).
 
 ## Usage cheatsheet
 ```
