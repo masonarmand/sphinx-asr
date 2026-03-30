@@ -341,6 +341,7 @@ def generate_feat_params(exp_dir: Path, experiment: dict, root: Path):
         "__CFG_AGC__": "none",
         "__CFG_CMN__": primary.get("cmn", "live"),
         "__CFG_VARNORM__": "no",
+        "__CFG_WAVFILE_SRATE__": str(int(primary.get("sample_rate", 16000)))
     }
 
     # if users set CFG_SVSPEC, then set svspec to that in feat.params,
