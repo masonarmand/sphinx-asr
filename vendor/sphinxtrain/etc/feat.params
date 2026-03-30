@@ -8,3 +8,4 @@
 -agc __CFG_AGC__
 -cmn __CFG_CMN__
 -varnorm __CFG_VARNORM__
+-samprate __CFG_WAVFILE_SRATE__
