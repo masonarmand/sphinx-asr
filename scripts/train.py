@@ -214,7 +214,20 @@ def run_step(
     """
     print(f"\n=== {step.name} ===")
     step_start = time.monotonic()
-    ret = subprocess.call(["perl", str(scripts_dir / step.script)])
+
+    output_lines = []
+    with subprocess.Popen(
+        ["perl", str(scripts_dir / step.script)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True
+    ) as proc:
+        for line in proc.stdout:
+            print(line, end="")
+            output_lines.append(line)
+    ret = proc.returncode
+    output = "".join(output_lines)
+
     elapsed = time.monotonic() - step_start
     minutes, seconds = divmod(int(elapsed), 60)
     print(f"=== Step time: {minutes}m {seconds}s ===")
@@ -236,6 +249,10 @@ def run_step(
             print(f"Error: {step.name} failed (exit {ret})")
             print_failure_logs(step, log_dir)
             sys.exit(ret)
+
+    if "Skipped" in output:
+        return elapsed
+
     validate_step(step, exp_dir, db_name, log_dir)
     return elapsed
 
