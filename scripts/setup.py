@@ -340,7 +340,7 @@ def generate_feat_params(exp_dir: Path, experiment: dict, root: Path):
         "__CFG_FEATURE__": "1s_c_d_dd",
         "__CFG_SVSPEC__": "",
         "__CFG_AGC__": "none",
-        "__CFG_CMN__": primary.get("cmn", "batch"),
+        "__CFG_CMN__": primary.get("cmn", "live"),
         "__CFG_VARNORM__": "no",
     }
 

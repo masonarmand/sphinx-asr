@@ -13,18 +13,29 @@ decode:
     split: 1hr-dev
 
 sphinxtrain:
-  CFG_CMN: "current"
-  CFG_CASEDSYMBOLS: "yes"
   CFG_HMM_TYPE: ".cont."
   CFG_STATESPERHMM: 3
   CFG_SKIPSTATE: "yes"
   CFG_INITIAL_NUM_DENSITIES: 1
   CFG_FINAL_NUM_DENSITIES: 8
-  CFG_N_TIED_STATES: 1000
+
+  # Scales with training data size (~8000 per 100 hours)
+  # note: switchboard is dual channel so its actually around 2x the amount of
+  # hours (e.g 300hr train = 500+ hrs) because each phone call is recorded as
+  # two separate audio files (one per speaker side).
+  CFG_N_TIED_STATES: 200
+
   CFG_LDA_MLLT: "yes"
   CFG_LDA_DIMENSION: 32
   CFG_CONVERGENCE_RATIO: 0.04
-  CFG_NPART: 12
+
+  # set to number of available CPU cores
+  CFG_NPART: 1
+  DEC_CFG_NPART: 1
   CFG_QUEUE_TYPE: "Queue::POSIX"
-  DEC_CFG_NPART: 12
-  CFG_G2P_MODEL: "no"
+
+  # decoder tuning
+  # DEC_CFG_LANGUAGEWEIGHT: "10"
+  # DEC_CFG_WORDPENALTY: "0.2"
+  # DEC_CFG_BEAMWIDTH: "1e-80"
+  # DEC_CFG_WORDBEAM: "1e-40"

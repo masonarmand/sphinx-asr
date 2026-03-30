@@ -185,7 +185,7 @@ def generate_sphinx_train_cfg(
 
     overrides = {}
 
-    # audio settings
+    # per-corpus settings
     train_corpora = experiment.get("train", {}).get("corpora", [])
     if train_corpora:
         primary = train_corpora[0].get("_corpus", {})
@@ -200,7 +200,13 @@ def generate_sphinx_train_cfg(
         overrides["CFG_NUM_FILT"] = int(primary.get("num_filt", 25))
         overrides["CFG_LO_FILT"] = int(primary.get("lo_filt", 130))
         overrides["CFG_HI_FILT"] = int(primary.get("hi_filt", 6800))
+        overrides["CFG_CMN"] = primary.get("cmn", "live")
 
+    # default global overrides
+    overrides["CFG_CASEDSYMBOLS"] = "yes"
+    overrides["CFG_G2P_MODEL"] = "no"
+
+    # filepaths
     overrides["CFG_WAVFILES_DIR"] = str(sphinx_root)
     overrides["CFG_FEATFILES_DIR"] = str(sphinx_root)
     overrides["DEC_CFG_FEATFILES_DIR"] = str(sphinx_root)
