@@ -15,6 +15,7 @@ Distributions for Classification", in proceedings of ICASSP 1998.
 __author__ = "David Huggins-Daines <dhdaines@gmail.com>"
 __version__ = "$Revision$"
 
+import os
 import sys
 
 try:
@@ -103,8 +104,16 @@ class MLLTModel(object):
             s = self.cov[0].shape
             d = -1
             while d < 0:
-                A = eye(s[0]) + 0.1 * random(s)
-                #A = eye(s[0])
+                # sphinx-asr PATCH:
+                # read mllt_seed from environment variable
+                mllt_seed = os.environ.get("SPHINXASR_MLLT_SEED")
+                if mllt_seed is not None:
+                    print(f"USING SEED: {mllt_seed}")
+                    seed(int(mllt_seed))
+                    A = eye(s[0]) + 0.1 * random(s)
+                else:
+                    print("USING IDENTITY MATRIX")
+                    A = eye(s[0])
                 d = det(A)
 
         # Flatten out the matrix so scipy.optimize can handle it
