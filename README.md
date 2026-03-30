@@ -4,7 +4,7 @@ Sphinx Automatic Speech Recognition. This repo contains a set of scripts & utili
 ## TODO
 ### General
 - [ ] Multi-Corpora training + corpus compatibilty verification
-- [ ] `train.py` - show warnings & errors from logs automatically
+- [X] `train.py` - show warnings & errors from logs automatically
 - [ ] `config.yml` (root config) - number of jobs, enable/disable torque, wiki credentials
 ### Feature Parity with old system
 - [ ] MediaWiki
@@ -15,7 +15,7 @@ Sphinx Automatic Speech Recognition. This repo contains a set of scripts & utili
 - [ ] `sphinx status` show running/queued jobs
 - [ ] `sphinx info <corpus> <split>` hours, utterance count, OOV
 - [ ] `sphinx new --from <exp>` create new expr but symlink a trained model from other experiment
-- [ ] `sphinx train --from-step <N>` resume from a specific step without starting over
+- [X] `sphinx train --from-step <N>` resume from a specific step without starting over
 ### New features (?)
 - [ ] `results.yml` - train & decode results.
   - train
