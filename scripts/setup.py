@@ -265,7 +265,8 @@ def generate_train_utterances(
             adapter_utt = adapter.get_utterances(
                 corpus_data["_dir"],
                 entry["split"],
-                split_cfg
+                split_cfg,
+                corpus_data
             )
             for fileid, text in adapter_utt:
                 fids.write(f"{fileid}\n")
@@ -300,7 +301,8 @@ def generate_decode_utterances(
         adapter_utt = adapter.get_utterances(
             corpus_data["_dir"],
             split_name,
-            split_cfg
+            split_cfg,
+            corpus_data
         )
         for fileid, text in adapter_utt:
             fids.write(f"{fileid}\n")
@@ -312,15 +314,41 @@ def generate_decode_utterances(
     return words
 
 
-def generate_feat_params(exp_dir: Path, root: Path):
-    """copy feat.params from vendor template."""
+def generate_feat_params(exp_dir: Path, experiment: dict, root: Path):
+    """Generate feat.params with actual values from corpus config"""
     src = root / "vendor" / "sphinxtrain" / "etc" / "feat.params"
     dst = exp_dir / "etc" / "feat.params"
-    if src.is_file():
-        shutil.copy2(src, dst)
-        print("Copied feat.params")
-    else:
+
+    if not src.is_file():
         print(f"Warning: feat.params not found at {src}")
+        return
+
+    content = src.read_text()
+
+    train_corpora = experiment.get("train", {}).get("corpora", [])
+    if train_corpora:
+        primary = train_corpora[0].get("_corpus", {})
+    else:
+        primary = {}
+
+    replacements = {
+        "__CFG_LO_FILT__": str(primary.get("lo_filt", 130)),
+        "__CFG_HI_FILT__": str(primary.get("hi_filt", 6800)),
+        "__CFG_NUM_FILT__": str(primary.get("num_filt", 25)),
+        "__CFG_TRANSFORM__": "dct",
+        "__CFG_LIFTER__": "22",
+        "__CFG_FEATURE__": "1s_c_d_dd",
+        "__CFG_SVSPEC__": "",
+        "__CFG_AGC__": "none",
+        "__CFG_CMN__": primary.get("cmn", "batch"),
+        "__CFG_VARNORM__": "no",
+    }
+
+    for placeholder, value in replacements.items():
+        content = content.replace(placeholder, value)
+
+    dst.write_text(content)
+    print("Generated feat.params")
 
 
 def generate_config(exp_dir: Path, experiment: dict, root: Path):
@@ -356,7 +384,7 @@ def main():
     setup_directories(exp_dir)
     words = generate_utterances(exp_dir, db_name, experiment)
     generate_dictionary(exp_dir, db_name, experiment, root, words)
-    generate_feat_params(exp_dir, root)
+    generate_feat_params(exp_dir, experiment, root)
     generate_config(exp_dir, experiment, root)
     print(f"\nSetup complete for experiment {db_name}.")
 

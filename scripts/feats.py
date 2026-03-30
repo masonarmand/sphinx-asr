@@ -42,6 +42,7 @@ def extract_one(
         audio_file: Path,
         mfc_file: Path,
         audio_ext: str,
+        audio_type: str,
         sample_rate: int,
         num_filt: int = 25,
         lo_filt: int = 130,
@@ -55,23 +56,24 @@ def extract_one(
         sphinx_fe,
         "-i", str(audio_file),
         "-o", str(mfc_file),
-        "-input_endian", "little",
         "-samprate", str(sample_rate),
         "-nfilt", str(num_filt),
-    "-lowerf", str(lo_filt),
+        "-lowerf", str(lo_filt),
         "-upperf", str(hi_filt),
         "-transform", "dct",
         "-lifter", "22",
     ]
 
-    if audio_ext == "nist":
+    if audio_type == "nist" or audio_ext == "sph":
         args.extend(["-nist", "yes"])
-    elif audio_ext == "raw":
-        args.extend(["-raw", "yes"])
-    elif audio_ext == "mswav":
+    elif audio_type == "raw" or audio_ext == "raw":
+        args.extend(["-raw", "yes", "-input_endian", "little"])
+    elif audio_type == "mswav" or audio_ext in ("wav", "mswav"):
         args.extend(["-mswav", "yes"])
     elif audio_ext not in NATIVE_FORMATS:
         args.extend(["-sox", "yes"])
+    else:
+        args.extend(["-input_endian", "little"])
 
     ret = subprocess.run(
         args,
@@ -92,6 +94,7 @@ def extract_features(
         sphinx_fe: Path,
         audio_dir: Path,
         audio_ext: str,
+        audio_type: str,
         sample_rate: int,
         num_filt: int = 25,
         lo_filt: int = 130,
@@ -140,6 +143,7 @@ def extract_features(
             audio_file,
             mfc_file,
             audio_ext,
+            audio_type,
             sample_rate,
             num_filt,
             lo_filt,
@@ -206,6 +210,7 @@ def process_split(
         err(f"no audio directory defined for split '{split}' or corpus")
     audio_dir = corpus_dir / audio_rel
     audio_ext = corpus_config.get("audio_format", "wav")
+    audio_type = corpus_config.get("audio_type", "")
     sample_rate = int(corpus_config.get("sample_rate", 16000))
     num_filt = int(corpus_config.get("num_filt", 25))
     lo_filt = int(corpus_config.get("lo_filt", 130))
@@ -225,6 +230,7 @@ def process_split(
         sphinx_fe,
         audio_dir,
         audio_ext,
+        audio_type,
         sample_rate,
         num_filt,
         lo_filt,

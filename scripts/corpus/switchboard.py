@@ -48,19 +48,21 @@ def get_utterances(
         corpus_dir: Path,
         split_name: str,
         split_cfg: dict,
+        corpus_cfg: dict
 ) -> Iterator[tuple[str, str]]:
     """
     yield (fileid, text) pairs for a librispeech split
     """
     trans_path = corpus_dir / split_cfg["transcripts"]
     if not trans_path.is_file():
-        raise FileNoteFoundError(
+        raise FileNotFoundError(
             f"transcript file not found: {trans_path}\n"
             f"Have you downloaded the '{split_name}' split?"
         )
 
     sphinx_root = corpus_dir.parent.parent
-    audio_dir = corpus_dir / "full" / "train" / "audio" / "utt"
+    audio_rel = split_cfg.get("audio") or corpus_cfg.get("audio_dir")
+    audio_dir = corpus_dir / audio_rel
 
     with open(trans_path) as f:
         for line in f:

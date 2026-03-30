@@ -36,7 +36,13 @@ def extract_text(corpus: dict, split_name: str, root: Path) -> str:
     split_cfg = corpus["splits"][split_name]
     adapter = get_adapter(corpus["name"])
     lines = []
-    for _, text in adapter.get_utterances(corpus["_dir"], split_name, split_cfg):
+    utterances = adapter.get_utterances(
+        corpus["_dir"],
+        split_name,
+        split_cfg,
+        corpus
+    )
+    for _, text in utterances:
         lines.append(f"<s> {text} </s>")
     return "\n".join(lines) + "\n"
 

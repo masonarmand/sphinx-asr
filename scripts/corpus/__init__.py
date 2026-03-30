@@ -18,7 +18,12 @@ def get_adapter(corpus_name: str):
 
     looks for scripts/corpus/<corpus_name>.py and returns the module.
     module must implement this function:
-    get_utterances(corpus_dir, split_name, split_cfg) -> Iterable[(str, str)]
+    get_utterances(
+        corpus_dir,
+        split_name,
+        split_cfg,
+        corpus_cfg
+    ) -> Iterable[(str, str)]
     """
     try:
         return importlib.import_module(f"corpus.{corpus_name}")

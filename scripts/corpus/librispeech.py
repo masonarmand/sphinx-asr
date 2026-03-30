@@ -11,6 +11,7 @@ def get_utterances(
         corpus_dir: Path,
         split_name: str,
         split_cfg: dict,
+        corpus_cfg: dict
 ) -> Iterator[tuple[str, str]]:
     """
     yield (fileid, text) pairs for a librispeech split
