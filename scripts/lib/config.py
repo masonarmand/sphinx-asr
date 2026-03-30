@@ -214,8 +214,16 @@ def generate_sphinx_train_cfg(
     # LM path
     decode_cfg = experiment.get("decode", {})
     lm_path = _resolve_lm_path(decode_cfg, sphinx_root)
-    if lm_path:
-        overrides["DEC_CFG_LANGUAGEMODEL"] = lm_path
+    if not lm_path:
+        err(
+            "no language model defined. Either:\n"
+            " - add 'lm: lm/<file>.arpa' to corpus.yml\n"
+            " - add 'lm: corpus/<name>/lm/<file.arpa>' to experiment.yml "
+            "under decode:\n"
+            " - run 'sphinx lm <corpus> --all' to generate one"
+        )
+
+    overrides["DEC_CFG_LANGUAGEMODEL"] = lm_path
 
     overrides["DEC_CFG_LISTOFFILES"] = (
         f"{exp_dir}/etc/{db_name}_decode.fileids"
@@ -261,6 +269,7 @@ def _resolve_lm_path(decode_cfg: dict, sphinx_root: Path) -> str | None:
         lm_rel = corpus.get("lm", "")
         if lm_rel:
             return str(corpus["_dir"] / lm_rel)
+    return None
 
 
 def _apply_overrides(cfg: str, overrides: dict) -> str:

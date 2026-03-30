@@ -31,8 +31,8 @@ def find_tool(name: str, root: Path) -> Path:
     err(f"{name} not found. Make sure to run 'make' to build the CMU toolkit.")
 
 
-def extract_text(corpus: dict, split_name: str, root: Path) -> str:
-    """extract cleaned text from training transcripts"""
+def extract_text_from_split(corpus: dict, split_name: str, root: Path) -> str:
+    """extract cleaned text from a split's transcripts"""
     split_cfg = corpus["splits"][split_name]
     adapter = get_adapter(corpus["name"])
     lines = []
@@ -40,6 +40,36 @@ def extract_text(corpus: dict, split_name: str, root: Path) -> str:
         corpus["_dir"],
         split_name,
         split_cfg,
+        corpus
+    )
+    for _, text in utterances:
+        lines.append(f"<s> {text} </s>")
+    return "\n".join(lines) + "\n"
+
+
+def extract_text_from_full(corpus: dict, root: Path) -> str:
+    """extract cleaned text from the full corpus transcript"""
+    full_trans_rel = corpus.get("full_transcripts")
+    if not full_trans_rel:
+        err(
+            f"corpus '{corpus['name']}' has no 'full_transcripts' defined in "
+            "corpus.yml. Add a 'full_transcripts' key pointing to the full "
+            "transcript file, or use a specific split instead:"
+            f"\n  lm.py {corpus['name']} <split>"
+        )
+    trans_path = corpus["_dir"] / full_trans_rel
+    if not trans_path.is_file():
+        err(f"full transcript not found: {trans_path}")
+
+    # create throwaway split config for get_utterances that points to the full
+    # transcript
+    full_split_cfg = {"transcripts": full_trans_rel}
+    adapter = get_adapter(corpus["name"])
+    lines = []
+    utterances = adapter.get_utterances(
+        corpus["_dir"],
+        "full",
+        full_split_cfg,
         corpus
     )
     for _, text in utterances:
@@ -109,7 +139,19 @@ def main():
         description="build a trigram language model from training transcripts"
     )
     parser.add_argument("corpus", help="Corpus name")
-    parser.add_argument("split", help="Split name")
+    parser.add_argument(
+        "split",
+        nargs="?",
+        help="Split name"
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help=(
+            "build LM from full corpus transcript "
+            "(corpus.yml full_transcripts)"
+        ),
+    )
     parser.add_argument(
         "-n", "--order",
         type=int,
@@ -125,29 +167,45 @@ def main():
     root = get_sphinx_root()
     corpus = load_corpus(args.corpus, root)
 
-    splits = corpus.get("splits", {})
-    if args.split not in splits:
-        available = ", ".join(splits.keys())
-        err(f"Split '{args.split}' not found. Available: {available}")
+    if args.all and args.split:
+        err("cannot use both a split name and --all")
+    if not args.all and not args.split:
+        parser.print_help()
+        sys.exit(1)
 
     if args.output:
         output_path = args.output
         if not output_path.is_absolute():
             output_path = root / output_path
+    elif args.all:
+        output_path = corpus["_dir"] / "lm" / f"{args.corpus}.arpa"
     else:
         output_path = corpus["_dir"] / "lm" / f"{args.split}.arpa"
 
-    print(f"building {args.order}-gram LM for {args.corpus}/{args.split}")
+    if args.all:
+        print(f"building {args.order}-gram LM for {args.corpus} (full corpus)")
+        text = extract_text_from_full(corpus, root)
+    else:
+        splits = corpus.get("splits", {})
+        if args.split not in splits:
+            available = ", ".join(splits.keys())
+            err(f"Split '{args.split}' not found. Available: {available}")
+        print(f"building {args.order}-gram LM for {args.corpus}/{args.split}")
+        text = extract_text(corpus, args.split, root)
+
+    line_count = text.count("\n")
+
     print(f"  output: {output_path}")
     print(f"  extracting text from transcripts...")
-    text = extract_text(corpus, args.split, root)
-    line_count = text.count("\n")
     print(f"  {line_count} sentences")
 
     build_lm(text, output_path, root, args.order)
 
     print(f"\ndone. language model written to {output_path}")
-    print(f"to use in an experiment, add to experiment.yml:")
+    if not corpus.get("lm"):
+        print(f"to use as the default LM for this corpus, add to corpus.yml:")
+        print(f"  lm: {output_path.relative_to(corpus['_dir'])}")
+    print(f"to override in an experiment, add to experiment.yml:")
     print(f"  decode:")
     print(f"    lm: {output_path.relative_to(root)}")
 
