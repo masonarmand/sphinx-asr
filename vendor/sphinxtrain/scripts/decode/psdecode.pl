@@ -108,6 +108,11 @@ if (defined($ST::DEC_CFG_GRAMMAR)) {
     push(@ST::DEC_CFG_EXTRA_ARGS, -lm => $ST::DEC_CFG_LANGUAGEMODEL);
 }
 
+# pass LDA dimension if LDA/MLLT transform was used (sphinx-asr PATCH)
+if ($ST::CFG_LDA_MLLT eq 'yes') {
+    push(@ST::DEC_CFG_EXTRA_ARGS, -ldadim => $ST::CFG_LDA_DIMENSION);
+}
+
 Log("Decoding $ctlcount segments starting at $ctloffset (part $part of $npart) ", 'result');
 
 my $rv = RunTool('pocketsphinx_batch', $logfile, $ctlcount,
@@ -123,7 +128,7 @@ my $rv = RunTool('pocketsphinx_batch', $logfile, $ctlcount,
 		 -beam => $ST::DEC_CFG_BEAMWIDTH,
 		 -wbeam => $ST::DEC_CFG_WORDBEAM,
 		 -fwdflatbeam => $ST::DEC_CFG_BEAMWIDTH,
-		 -fwdflatwbeam => $ST::DEC_CFG_WORDBEAM,		 
+		 -fwdflatwbeam => $ST::DEC_CFG_WORDBEAM,
 		 -pbeam => $ST::DEC_CFG_BEAMWIDTH,
 		 -lpbeam => $ST::DEC_CFG_BEAMWIDTH,
 		 -lponlybeam => $ST::DEC_CFG_BEAMWIDTH,
