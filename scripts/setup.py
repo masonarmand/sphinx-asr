@@ -338,11 +338,18 @@ def generate_feat_params(exp_dir: Path, experiment: dict, root: Path):
         "__CFG_TRANSFORM__": "dct",
         "__CFG_LIFTER__": "22",
         "__CFG_FEATURE__": "1s_c_d_dd",
-        "__CFG_SVSPEC__": "",
         "__CFG_AGC__": "none",
         "__CFG_CMN__": primary.get("cmn", "live"),
         "__CFG_VARNORM__": "no",
     }
+
+    # if users set CFG_SVSPEC, then set svspec to that in feat.params,
+    # otherwise just remove it
+    svspec = experiment.get("sphinxtrain", {}).get("CFG_SVSPEC", "")
+    if svspec:
+        content = content.replace("__CFG_SVSPEC__", svspec)
+    else:
+        content = re.sub(r"^-svspec\s.*\n?", "", content, flags=re.MULTILINE)
 
     for placeholder, value in replacements.items():
         content = content.replace(placeholder, value)
