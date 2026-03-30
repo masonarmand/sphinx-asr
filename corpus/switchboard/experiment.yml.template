@@ -12,6 +12,9 @@ decode:
     name: switchboard
     split: 1hr-dev
 
+pipeline:
+  mllt_init: "eye"
+
 sphinxtrain:
   CFG_HMM_TYPE: ".cont."
   CFG_STATESPERHMM: 3
