@@ -11,7 +11,7 @@
 	$(CC) $(CFLAGS)  -c -o $*.o $*.c
 
 
-CC              = gcc
+CC              = gcc -fpermissive
 
 # OPT_FLAG	Make the compiler run in optimised mode if set to -O
 # GDB_FLAG	If compiling under gcc then setting this flag to -ggdb will
