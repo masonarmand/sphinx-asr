@@ -31,8 +31,8 @@ typedef short int16;
 
 FILE *rr_fopen(char *filename, char *mode);
 void *rr_fseek(FILE *fp, int offset, int mode, char *description);
-void *rr_fread();
-void *rr_fwrite();
+void *rr_fread(char *ptr, int elsize, int n_elem, FILE *fp, char *header, int not_more);
+void *rr_fwrite(char *ptr, int elsize, int n_elem, FILE *fp, char *header);
 char *rr_malloc(size_t n_bytes);
 char *rr_calloc(size_t nelem, size_t elsize);
 int  rr_filesize(int fd);
@@ -79,4 +79,4 @@ typedef int    cluster_t;
 
 #define  MAX_WORDS_PER_DOC 65534
 
-#endif  
+#endif
