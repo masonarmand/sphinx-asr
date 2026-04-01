@@ -14,7 +14,7 @@ if [ ! -f "$VENV_DIR/bin/python3" ]; then
     echo "Creating python virtual environment..."
     python3 -m venv "$VENV_DIR"
     echo "Installing python dependencies (this is a one time setup)..."
-    "$VENV_DIR/bin/pip" install -r requirements.txt
+    "$VENV_DIR/bin/pip" install -r "$SCRIPT_DIR/requirements.txt"
 fi
 
 PYTHON="$VENV_DIR/bin/python3"
