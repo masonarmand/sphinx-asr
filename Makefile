@@ -15,16 +15,20 @@ CMU_TOOLKIT_BIN := $(CMU_TOOLKIT_SRC)/bin
 all: install
 
 pocketsphinx:
-	cmake -S $(POCKETSPHINX_SRC) -B $(POCKETSPHINX_BUILD)
-	cmake --build $(POCKETSPHINX_BUILD)
+	cmake -S $(POCKETSPHINX_SRC) -B $(POCKETSPHINX_BUILD) \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_C_FLAGS="-w"
+	cmake --build $(POCKETSPHINX_BUILD) -j$$(nproc)
 
 sphinxtrain: pocketsphinx
-	cmake -S $(SPHINXTRAIN_SRC) -B $(SPHINXTRAIN_BUILD)
-	cmake --build $(SPHINXTRAIN_BUILD)
+	cmake -S $(SPHINXTRAIN_SRC) -B $(SPHINXTRAIN_BUILD) \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_C_FLAGS="-w"
+	cmake --build $(SPHINXTRAIN_BUILD) -j$$(nproc)
 
 cmu_toolkit:
 	mkdir -p $(CMU_TOOLKIT_SRC)/bin $(CMU_TOOLKIT_SRC)/lib
-	cd $(CMU_TOOLKIT_SRC)/src && make install
+	cd $(CMU_TOOLKIT_SRC)/src && make install CFLAGS="-w -O2"
 
 install: sphinxtrain cmu_toolkit
 	mkdir -p $(PREFIX)
