@@ -21,7 +21,7 @@ import sys
 try:
     from numpy import sum, dot, diag, log, eye, sqrt, newaxis, concatenate
     from numpy.linalg import det, inv
-    from numpy.random import random
+    from numpy.random import random, seed
     from scipy.optimize import fmin_l_bfgs_b
 except ImportError:
     print("FATAL: Failed to import numpy modules. "
