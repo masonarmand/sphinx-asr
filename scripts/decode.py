@@ -132,11 +132,6 @@ def main():
     progress_thread.start()
 
     start = time.monotonic()
-    ret = subprocess.call(
-        ["perl", str(decode_script)],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
 
     output_lines = []
     with subprocess.Popen(
