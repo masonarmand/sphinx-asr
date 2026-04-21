@@ -1,36 +1,6 @@
 # sphinx-asr
 Sphinx Automatic Speech Recognition. This repo contains a set of scripts & utilities that serve as wrappers around CMU SphinxTrain and CMU PocketSphinx.
 
-## TODO
-### General
-- [ ] Multi-Corpora training + corpus compatibilty verification
-- [X] `train.py` - show warnings & errors from logs automatically
-- [ ] `config.yml` (root config) - number of jobs, enable/disable torque, wiki credentials
-### Feature Parity with old system
-- [ ] MediaWiki
-- [ ] WER scoring
-- [ ] MLLR speaker adaptation `sphinx adapt <exp> <speaker>` `sphinx decode --mllr`
-- [ ] MLLT seed control. Set `mllt_seed` to number or `random` in `experiment.yml`
-  - maybe an optional `mllt_trials: N` to run N seeds and keep the best.
-- [ ] `sphinx status` show running/queued jobs
-- [ ] `sphinx info <corpus> <split>` hours, utterance count, OOV
-- [ ] `sphinx new --from <exp>` create new expr but symlink a trained model from other experiment
-- [X] `sphinx train --from-step <N>` resume from a specific step without starting over
-### New features (?)
-- [ ] `results.yml` - train & decode results.
-  - train
-    - time completed
-    - total time
-    - time for each step
-  - decode
-    - time completed
-    - total time
-    - WER
-    - counts for sentences/words/insertions/deletions/substitutions
-- [ ] `sphinx compare <exp1> <exp2> - diff the WER, config params, training time
-- [ ] `sphinx search` search experiments by name, author, description, corpora, etc
-- [ ] `sphinx clean <exp>` delete training artifacts but keep final model (to save on disk space).
-
 ## Usage cheatsheet
 ```
 Usage: sphinx.sh <command> [args]
@@ -134,9 +104,36 @@ sphinx feats librispeech all # generates feats for all splits under the
                              # librispeech corpus.
 ```
 
-Each corpus usually has its own format, so a parser must be created for
-each new corpus to convert the format into something that is readable by
-sphinxtrain. See `scripts/corpus` for corpus-specific parsers.
+A corpus.yml for librispeech is included in this repository. Here is an
+example of the directory structure for a complete librispeech installation:
+
+```
+corpus/
+  librispeech/
+    corpus.yml
+    dev-clean/
+    dev-other/
+    test-clean/
+    test-other/
+    train-clean-100/
+    train-clean-360/
+    train-clean-500/
+    lm/
+      3-gram.pruned.3e-7.arpa.gz
+    dict/
+      librispeech-lexicon.txt
+
+```
+
+Librispeech download links:
+
+- Splits: https://www.openslr.org/12
+- Dictionaries and LMs: https://www.openslr.org/11
+
+Each corpus usually has its own transcript format, so an adapter must be
+created for each new corpus to convert the format into something that is
+readable by sphinxtrain. See `scripts/corpus` for corpus-specific adapters.
+Adapters for switchboard and librispeech are already present.
 
 ## Experiments
 
